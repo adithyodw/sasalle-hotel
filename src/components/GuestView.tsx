@@ -13,6 +13,7 @@ interface GuestViewProps {
   selectedRoomForWizard: Room | null;
   onCloseBookingWizard: () => void;
   isWizardOpen: boolean;
+  isNativeMobile?: boolean;
 }
 
 export default function GuestView({
@@ -23,7 +24,8 @@ export default function GuestView({
   onOpenBookingWizard,
   selectedRoomForWizard,
   onCloseBookingWizard,
-  isWizardOpen
+  isWizardOpen,
+  isNativeMobile = false,
 }: GuestViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<'intro' | 'dining' | 'spa'>('intro');
   const [partySize, setPartySize] = useState(2);
@@ -41,25 +43,28 @@ export default function GuestView({
   };
 
   return (
-    <div className="bg-[#F5F1EA] text-[#0B0D10] font-sans pb-16 relative">
+    <div className={`bg-[#F5F1EA] text-[#0B0D10] font-sans relative w-full ${isNativeMobile ? 'pb-2' : 'pb-16'}`}>
       
       {/* HOME PAGE TAB */}
       {activeTab === 'home' && (
         <div className="space-y-12">
           {/* Sub-navigation bar inside HOME dashboard */}
-          <div className="flex justify-center border-b border-[#0B0D10]/10 bg-[#F5F1EA]/85 backdrop-blur-md sticky top-20 z-30 py-3 select-none">
-            <div className="flex gap-2 bg-[#0B0D10]/5 p-1 text-[10px] font-mono font-bold">
+          <div className={`flex justify-center border-b border-[#0B0D10]/10 bg-[#F5F1EA]/95 backdrop-blur-md sticky z-30 py-2.5 select-none ${isNativeMobile ? 'top-0' : 'top-20'} px-2`}>
+            <div className="flex gap-1 sm:gap-2 bg-[#0B0D10]/5 p-1 text-[9px] sm:text-[10px] font-mono font-bold w-full max-w-md">
               {(['intro', 'dining', 'spa'] as const).map((sub) => {
-                const subLabels = { intro: 'JOURNEY', dining: 'THE BRICK & IRON', spa: 'THE SANCTUARY SPA' };
+                const subLabels = isNativeMobile
+                  ? { intro: 'JOURNEY', dining: 'DINING', spa: 'SPA' }
+                  : { intro: 'JOURNEY', dining: 'THE BRICK & IRON', spa: 'THE SANCTUARY SPA' };
                 return (
                   <button
                     key={sub}
                     id={`sub-tab-${sub}`}
+                    type="button"
                     onClick={() => setActiveSubTab(sub)}
-                    className={`px-4 py-1.5 transition-all uppercase tracking-wider ${
+                    className={`flex-1 px-2 sm:px-4 py-2 transition-all uppercase tracking-wider text-center ${
                       activeSubTab === sub
                         ? 'bg-[#0B0D10] text-white font-bold'
-                        : 'text-[#0B0D10]/60 hover:text-[#0B0D10]'
+                        : 'text-[#0B0D10]/60 active:text-[#0B0D10]'
                     }`}
                   >
                     {subLabels[sub]}
@@ -71,22 +76,25 @@ export default function GuestView({
 
           {/* INTRO JOURNEY PANEL */}
           {activeSubTab === 'intro' && (
-            <div className="space-y-12 px-4 md:px-12 max-w-4xl mx-auto">
+            <div className={`space-y-8 sm:space-y-12 max-w-4xl mx-auto ${isNativeMobile ? 'px-0' : 'px-4 md:px-12'}`}>
               
               {/* Massive Cinematic Hero Banner with Text Overlay */}
-              <div className="relative h-[480px] w-full bg-cover bg-center select-none" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuACA1bW6pzkHrNaWU7651J1uvHwuF48gcD38-P49yYDemIgPKkZ_boZLkpEwZgqtVyiyDGTR3xcwEXuqt73xpKIKz0TgpQmrj1rQkJq0rjnLnhMPx0RjcTTyyoS1JUA3y7D5cnzOaCpQzhGLNEo0SjqZ4YU4I6jlBblW72d7VkAcs1O8_sPTr4EZ3CeDpIkVSgvtG5-lu29R4EJU6evVVR7jwJxvuoeGxJsUPg2MjDFnJ2Naprb-VmC73Lw3laRIQzq7UbohZ8TdS_R')` }}>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 flex flex-col justify-end p-8 md:p-12 text-white">
+              <div
+                className={`relative w-full bg-cover bg-center select-none ${isNativeMobile ? 'h-[52vw] min-h-[220px] max-h-[360px]' : 'h-[480px]'}`}
+                style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuACA1bW6pzkHrNaWU7651J1uvHwuF48gcD38-P49yYDemIgPKkZ_boZLkpEwZgqtVyiyDGTR3xcwEXuqt73xpKIKz0TgpQmrj1rQkJq0rjnLnhMPx0RjcTTyyoS1JUA3y7D5cnzOaCpQzhGLNEo0SjqZ4YU4I6jlBblW72d7VkAcs1O8_sPTr4EZ3CeDpIkVSgvtG5-lu29R4EJU6evVVR7jwJxvuoeGxJsUPg2MjDFnJ2Naprb-VmC73Lw3laRIQzq7UbohZ8TdS_R')` }}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 flex flex-col justify-end text-white ${isNativeMobile ? 'p-5' : 'p-8 md:p-12'}`}>
                   <span className="text-[10px] font-mono tracking-[0.2em] opacity-80 mb-2 uppercase text-[#B89B5E] font-bold">
                     {getLabel('hero_subtitle')}
                   </span>
-                  <h1 className="font-headline text-4xl md:text-6xl font-light tracking-tight leading-none max-w-xl text-[#F5F1EA]">
+                  <h1 className={`font-headline font-light tracking-tight leading-tight text-[#F5F1EA] ${isNativeMobile ? 'text-2xl sm:text-3xl' : 'text-4xl md:text-6xl max-w-xl'}`}>
                     {getLabel('hero_title')}
                   </h1>
                 </div>
               </div>
 
               {/* Editorial Intro Narrative */}
-              <div className="text-center max-w-2xl mx-auto space-y-4 py-6">
+              <div className={`text-center max-w-2xl mx-auto space-y-4 py-6 ${isNativeMobile ? 'px-4' : ''}`}>
                 <span className="font-mono text-xs text-[#7A3A2E] tracking-widest font-black uppercase">
                   {getLabel('section1_num')}
                 </span>
@@ -99,11 +107,12 @@ export default function GuestView({
               </div>
 
               {/* Aesthetic Material Pairings Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 select-none">
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 select-none ${isNativeMobile ? 'px-4' : ''}`}>
                 <div className="space-y-4">
-                  <div className="h-64 overflow-hidden">
-                    <img 
-                      className="w-full h-full object-cover grayscale opacity-90 hover:grayscale-0 transition-all duration-700"
+                  <div className={`overflow-hidden ${isNativeMobile ? 'h-48' : 'h-64'}`}>
+                    <img
+                      loading="lazy"
+                      className="w-full h-full object-cover grayscale opacity-90 md:hover:grayscale-0 transition-all duration-700"
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr4p6em0177fbmUi22y1r_j09M115Qc3c2mLjF70gMCGPLM49jbNZBrBZXN1eNkfk0SEVmsIbvU_yXtTHIUHQ5a-jOkEEwCEmHIJWmoqoNLX1o6OtLMQRO4O2GM-2Z5Q9kam3OSsVCUec47MtsnhghGSguAiZqRhNqVV9NoL6pATEYzYSHdSQ1hpS3i0U74UA7AlV4ejCKKFiqE6xcqZqs1_jnWQyi2f4ofnFkyObCd8vKMnfaGHq_OI8amMdJb_VcN9qfe6cSP1M-" 
                       alt="Material Integrity"
                       referrerPolicy="no-referrer"
@@ -118,8 +127,9 @@ export default function GuestView({
                 </div>
 
                 <div className="space-y-4">
-                  <div className="h-64 overflow-hidden">
-                    <img 
+                  <div className={`overflow-hidden ${isNativeMobile ? 'h-48' : 'h-64'}`}>
+                    <img
+                      loading="lazy"
                       className="w-full h-full object-cover opacity-95"
                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMJOTaYWp6dwSyET66aApi6HbIoGxv9GqWnPaHAvUwnLMAABWv-X9cKglK4Alf9wHsB4vupu9CiWyEk4unTzHoJ5SdJYxUFzKABK-45C9VUysS5PvfHyYZYWhHKJPT9JPHD8PyX88DuP5172ZPO0P7huYzY9BX5qLSDS3Bkjo90WKawZuUO6jjvUp3hkqTKzCLuhjWQz41IhuDbEzt0lNPTW87J5o8ImC7zJHcr1EgVy7s6HwJigj9i8JyRuKyQO0NKycyCkEDvrwQ" 
                       alt="The Quietude"
@@ -136,7 +146,7 @@ export default function GuestView({
               </div>
 
               {/* Bottom Large Stillness Text Pattern */}
-              <div className="border-[#0B0D10]/10 border-t border-b py-10 text-center bg-[#0B0D10]/5 select-none my-12">
+              <div className={`border-[#0B0D10]/10 border-t border-b py-8 sm:py-10 text-center bg-[#0B0D10]/5 select-none my-8 sm:my-12 ${isNativeMobile ? 'mx-4' : ''}`}>
                 <span className="font-mono text-[9px] tracking-[0.4em] text-[#B89B5E] font-bold uppercase mb-2 block">
                   {getLabel('stillness_banner')}
                 </span>
@@ -146,11 +156,11 @@ export default function GuestView({
               </div>
 
               {/* The House Principles (List block) */}
-              <div className="space-y-4 pt-4">
-                <h3 className="font-headline text-2xl text-center text-[#0B0D10] font-light tracking-[0.1em] border-b border-[#0B0D10]/15 pb-2 select-none">
+              <div className={`space-y-4 pt-4 ${isNativeMobile ? 'px-4 pb-4' : ''}`}>
+                <h3 className="font-headline text-xl sm:text-2xl text-center text-[#0B0D10] font-light tracking-[0.1em] border-b border-[#0B0D10]/15 pb-2 select-none">
                   {getLabel('house_principles')}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-[#0B0D10]/80 select-none">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 text-xs text-[#0B0D10]/80 select-none">
                   <div className="p-4 border border-[#0B0D10]/10 hover:border-[#7A3A2E]/30 bg-white/40 transition-colors">
                     <span className="font-bold text-[#7A3A2E] block uppercase font-mono text-[10px] mb-1">01. {getLabel('p1_title')}</span>
                     Real materials speak directly. High-contrast custom glazed Hijau Nyonya mosaics, kiln-fired tiles, and volcanic stone.
@@ -170,10 +180,13 @@ export default function GuestView({
 
           {/* THE BRICK & IRON (DINING) PANEL */}
           {activeSubTab === 'dining' && (
-            <div className="space-y-10 px-4 md:px-12 max-w-4xl mx-auto">
+            <div className={`space-y-8 sm:space-y-10 max-w-4xl mx-auto ${isNativeMobile ? 'px-0' : 'px-4 md:px-12'}`}>
               {/* Dining Cinematic Hero Banner */}
-              <div className="relative h-96 w-full bg-cover bg-center select-none" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkB6TCeS9QAaIWChe7IYfvbuM47yjeswfLA7MGh9iKSsrEbWIOQjwHShJXiw1h4cP1Qj9iW0HbgMxhfjQib5n-10XnA2QpP023iz2JxwjDq_kq4Ve1tNqIbJRvtEAWwY7yQUci7oruVbN-Xjubi_KBrnuZprSkMNBoATWXRYq8CiLaTGC7RrL_5p8noYgakcPW5V2PAww-MbCGI5uXsNcaGj4MZPVrXXmm3wPOiOFd9eVa1LvE0h6wHSZXAuoSf1FbsfR8nPScziVG')` }}>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 flex flex-col justify-end p-8 text-white">
+              <div
+                className={`relative w-full bg-cover bg-center select-none ${isNativeMobile ? 'h-[45vw] min-h-[200px] max-h-[320px]' : 'h-96'}`}
+                style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkB6TCeS9QAaIWChe7IYfvbuM47yjeswfLA7MGh9iKSsrEbWIOQjwHShJXiw1h4cP1Qj9iW0HbgMxhfjQib5n-10XnA2QpP023iz2JxwjDq_kq4Ve1tNqIbJRvtEAWwY7yQUci7oruVbN-Xjubi_KBrnuZprSkMNBoATWXRYq8CiLaTGC7RrL_5p8noYgakcPW5V2PAww-MbCGI5uXsNcaGj4MZPVrXXmm3wPOiOFd9eVa1LvE0h6wHSZXAuoSf1FbsfR8nPScziVG')` }}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 flex flex-col justify-end text-white ${isNativeMobile ? 'p-5' : 'p-8'}`}>
                   <span className="text-[10px] font-mono tracking-[0.2em] opacity-80 mb-2 uppercase text-[#B89B5E] font-bold">
                     {getLabel('dining_subtitle')}
                   </span>
@@ -184,7 +197,7 @@ export default function GuestView({
               </div>
 
               {/* Culinary Philosophy narrative */}
-              <div className="max-w-xl mx-auto text-center space-y-3">
+              <div className={`max-w-xl mx-auto text-center space-y-3 ${isNativeMobile ? 'px-4' : ''}`}>
                 <span className="font-mono text-[10px] text-[#7A3A2E] tracking-widest font-black uppercase">
                   {getLabel('seasonal_manifestations')}
                 </span>
@@ -216,7 +229,7 @@ export default function GuestView({
               </div>
 
               {/* Dining interactive Table Reservation Scheduler */}
-              <div className="border border-[#0B0D10]/15 p-8 bg-white/70 backdrop-blur-md shadow-sm">
+              <div className={`border border-[#0B0D10]/15 bg-white/70 backdrop-blur-md shadow-sm ${isNativeMobile ? 'mx-4 p-5' : 'p-8'}`}>
                 <h3 className="font-headline text-2xl text-[#0B0D10] mb-4 font-light text-center uppercase tracking-wider">
                   {getLabel('secure_table')}
                 </h3>
@@ -292,11 +305,14 @@ export default function GuestView({
 
           {/* THE SANCTUARY WELLNESS SPA PANEL */}
           {activeSubTab === 'spa' && (
-            <div className="space-y-10 px-4 md:px-12 max-w-4xl mx-auto">
+            <div className={`space-y-8 sm:space-y-10 max-w-4xl mx-auto ${isNativeMobile ? 'px-0' : 'px-4 md:px-12'}`}>
               
               {/* Centered cinematic image */}
-              <div className="relative h-96 w-full bg-cover bg-center select-none" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIu0BFbmGeuTDKAQzdypncSr-hCBWAZLU0HDCawYVKpikFMawiy_UeClWZAh9sjcud68UEoWi8bii3_jESPdeozDzN2vEJQsEr6b__js1M-_apXI7Jdk0cisV29vKIQ_Fhr4sddZOKd53JrALEcyl9zJ6A2DS8FzxpQWtUSM6Fy-gkVXym5qqJmET2EMAWGQHS2nh6yNnJunzwxb7KUTHxsMNtVJFeYu2_VgJv4fA_s-FGmG-1fmhBWnJJEJz_T2nUnhGtRyxdwhOE')` }}>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 flex flex-col justify-end p-8 text-white">
+              <div
+                className={`relative w-full bg-cover bg-center select-none ${isNativeMobile ? 'h-[45vw] min-h-[200px] max-h-[320px]' : 'h-96'}`}
+                style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIu0BFbmGeuTDKAQzdypncSr-hCBWAZLU0HDCawYVKpikFMawiy_UeClWZAh9sjcud68UEoWi8bii3_jESPdeozDzN2vEJQsEr6b__js1M-_apXI7Jdk0cisV29vKIQ_Fhr4sddZOKd53JrALEcyl9zJ6A2DS8FzxpQWtUSM6Fy-gkVXym5qqJmET2EMAWGQHS2nh6yNnJunzwxb7KUTHxsMNtVJFeYu2_VgJv4fA_s-FGmG-1fmhBWnJJEJz_T2nUnhGtRyxdwhOE')` }}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 flex flex-col justify-end text-white ${isNativeMobile ? 'p-5' : 'p-8'}`}>
                   <h2 className="font-headline text-3xl md:text-5xl font-light text-[#F5F1EA] tracking-wide">
                     {getLabel('spa_title')}
                   </h2>
@@ -304,7 +320,7 @@ export default function GuestView({
               </div>
 
               {/* Quote block and introduction */}
-              <div className="max-w-2xl mx-auto text-center space-y-4">
+              <div className={`max-w-2xl mx-auto text-center space-y-4 ${isNativeMobile ? 'px-4' : ''}`}>
                 <span className="font-headline text-2xl font-light italic text-[#7A3A2E] block">
                   {getLabel('spa_intro_quote')}
                 </span>
@@ -359,7 +375,7 @@ export default function GuestView({
               </div>
 
               {/* Wellness call-down CTA section with pattern background */}
-              <div className="bg-[#7A3A2E] text-white p-10 text-center space-y-5 relative border border-[#0B0D10]/10 shadow-lg select-none">
+              <div className={`bg-[#7A3A2E] text-white text-center space-y-5 relative border border-[#0B0D10]/10 shadow-lg select-none ${isNativeMobile ? 'mx-4 p-6' : 'p-10'}`}>
                 <h3 className="font-headline text-3xl text-[#F5F1EA] font-light tracking-wide">
                   {getLabel('reserve_moment')}
                 </h3>
@@ -382,7 +398,7 @@ export default function GuestView({
 
       {/* ROOMS PAGE SANCTUARIES */}
       {activeTab === 'rooms' && (
-        <div className="px-4 md:px-12 max-w-4xl mx-auto space-y-8 select-none">
+        <div className={`max-w-4xl mx-auto space-y-6 sm:space-y-8 select-none ${isNativeMobile ? 'px-4' : 'px-4 md:px-12'}`}>
           <div className="text-center space-y-2 py-4">
             <div className="mb-4 flex items-center justify-center gap-4">
               <div className="w-12 h-[1px] bg-[#B89B5E]"></div>
@@ -404,8 +420,9 @@ export default function GuestView({
                 className="bg-white/95 border border-[#0B0D10]/10 overflow-hidden flex flex-col md:flex-row shadow-sm transition-all duration-300 hover:shadow-lg"
               >
                 {/* Room Image */}
-                <div className="md:w-1/2 h-80 overflow-hidden">
-                  <img 
+                <div className={`md:w-1/2 overflow-hidden ${isNativeMobile ? 'h-52' : 'h-80'}`}>
+                  <img
+                    loading="lazy"
                     className="w-full h-full object-cover select-none"
                     src={room.image} 
                     alt={room.name}
@@ -438,7 +455,7 @@ export default function GuestView({
                     </div>
                   </div>
 
-                  <div className="pt-6 border-t border-stone-100 flex items-center justify-between gap-2 mt-4">
+                  <div className={`pt-6 border-t border-stone-100 flex gap-3 mt-4 ${isNativeMobile ? 'flex-col' : 'items-center justify-between'}`}>
                     <div>
                       <span className="text-[10px] font-mono text-stone-400 uppercase block tracking-wider">
                         {getLabel('starting_from')}
@@ -448,10 +465,11 @@ export default function GuestView({
                       </span>
                     </div>
 
-                    <button 
+                    <button
+                      type="button"
                       id={`btn-book-${room.id}`}
                       onClick={() => onOpenBookingWizard(room)}
-                      className="bg-[#0B0D10] text-[#F5F1EA] px-6 py-3 text-[10px] uppercase tracking-[0.2em] font-sans font-bold hover:bg-[#7A3A2E] transition-all hover:translate-x-1 duration-200"
+                      className={`bg-[#0B0D10] text-[#F5F1EA] text-[10px] uppercase tracking-[0.2em] font-sans font-bold active:bg-[#7A3A2E] transition-colors ${isNativeMobile ? 'w-full py-3.5' : 'px-6 py-3 hover:bg-[#7A3A2E] hover:translate-x-1 duration-200'}`}
                     >
                       {getLabel('view_sanctuary')}
                     </button>
@@ -472,9 +490,9 @@ export default function GuestView({
       )}
 
       {/* POPUP OVERLAY WIZARD */}
-      {isWizardOpen && selectedRoomForWizard && (
+      {isWizardOpen && selectedRoomForWizard && !isNativeMobile && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
-          <BookingWizard 
+          <BookingWizard
             room={selectedRoomForWizard}
             onBookingComplete={onBookingComplete}
             onClose={onCloseBookingWizard}

@@ -9,6 +9,7 @@ interface ConciergeChatProps {
   onUpdateBookingPrefs: (prefs: Partial<Booking['preferences']>) => void;
   onAddHousekeeping: (req: HousekeepingRequest) => void;
   onAddDining: (order: InRoomDiningOrder) => void;
+  fillHeight?: boolean;
 }
 
 export default function ConciergeChat({
@@ -16,7 +17,8 @@ export default function ConciergeChat({
   activeBooking,
   onUpdateBookingPrefs,
   onAddHousekeeping,
-  onAddDining
+  onAddDining,
+  fillHeight = false,
 }: ConciergeChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -164,7 +166,13 @@ export default function ConciergeChat({
   };
 
   return (
-    <div className="bg-[#F5F1EA] text-[#0B0D10] flex flex-col h-full max-w-md mx-auto border border-[#0B0D10]/10 rounded-none relative">
+    <div
+      className={`bg-[#F5F1EA] text-[#0B0D10] flex flex-col relative w-full ${
+        fillHeight
+          ? 'h-full min-h-0 border-0'
+          : 'h-full max-w-md mx-auto border border-[#0B0D10]/10'
+      }`}
+    >
       {/* Header Info */}
       <div className="bg-[#0B0D10] text-[#F5F1EA] p-4 flex items-center justify-between border-b border-[#0B0D10]/20 select-none">
         <div className="flex items-center gap-2">
@@ -239,7 +247,11 @@ export default function ConciergeChat({
       </div>
 
       {/* Messages Window */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4 min-h-[300px] max-h-[480px]">
+      <div
+        className={`flex-1 min-h-0 p-4 overflow-y-auto space-y-4 -webkit-overflow-scrolling-touch ${
+          fillHeight ? '' : 'min-h-[300px] max-h-[480px]'
+        }`}
+      >
         {messages.map((msg) => {
           const isGuest = msg.sender === 'guest';
           return (
@@ -281,7 +293,7 @@ export default function ConciergeChat({
           e.preventDefault();
           handleSendMessage(inputText);
         }}
-        className="p-3 bg-[#F5F1EA] border-t border-[#0B0D10]/10 flex gap-2"
+        className="shrink-0 p-3 bg-[#F5F1EA] border-t border-[#0B0D10]/10 flex gap-2"
       >
         <input
           type="text"

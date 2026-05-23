@@ -7,31 +7,30 @@ import GuestView from './components/GuestView';
 import AdminView from './components/AdminView';
 import ConciergeChat from './components/ConciergeChat';
 import DigitalKey from './components/DigitalKey';
+import BookingWizard from './components/BookingWizard';
 import MobileDeviceFrame from './components/MobileDeviceFrame';
+import { useIsMobile } from './hooks/useIsMobile';
 
 export default function App() {
-  // Global States
+  const isNativeMobile = useIsMobile();
   const [language, setLanguage] = useState<Language>('en');
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
-    return typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop';
+    if (typeof window === 'undefined') return 'desktop';
+    const isCapacitor =
+      typeof (window as Window & { Capacitor?: unknown }).Capacitor !== 'undefined';
+    return window.innerWidth < 768 || isCapacitor ? 'mobile' : 'desktop';
   });
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
-  const [isRealMobile, setIsRealMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      const isMobileSize = window.innerWidth < 768 || window.hasOwnProperty('Capacitor');
-      setIsRealMobile(isMobileSize);
-      if (isMobileSize) {
-        setViewMode('mobile');
-      }
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+    if (isNativeMobile) {
+      setViewMode('mobile');
+      document.body.classList.add('native-mobile');
+    } else {
+      document.body.classList.remove('native-mobile');
+    }
+  }, [isNativeMobile]);
 
-  // Interactive database nodes mapped from or satisfying persistent storage
   const [bookings, setBookings] = useState<Booking[]>(() => {
     const cached = localStorage.getItem('sasalle_bookings');
     return cached ? JSON.parse(cached) : INITIAL_BOOKINGS;
@@ -62,7 +61,6 @@ export default function App() {
   const [selectedRoomForWizard, setSelectedRoomForWizard] = useState<Room | null>(null);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
 
-  // Sync caches
   useEffect(() => {
     localStorage.setItem('sasalle_bookings', JSON.stringify(bookings));
   }, [bookings]);
@@ -79,10 +77,8 @@ export default function App() {
     localStorage.setItem('sasalle_logs', JSON.stringify(logs));
   }, [logs]);
 
-  // Derived Active Resident Booking
   const activeBooking = bookings.length > 0 ? bookings[bookings.length - 1] : null;
 
-  // Actions
   const appendLog = (description: string, type: ActivityLog['type']) => {
     const newLog: ActivityLog = {
       id: `LOG-${Date.now()}`,
@@ -135,16 +131,15 @@ export default function App() {
     appendLog(`Kitchen registered food service order ${order.id}.`, 'dining');
   };
 
-  // Switch action status in Admin ledger panel
   const handleToggleHousekeeping = (id: string) => {
-    setHousekeeping(prev => prev.map(h => 
+    setHousekeeping(prev => prev.map(h =>
       h.id === id ? { ...h, status: h.status === 'completed' ? 'requested' : 'completed' } : h
     ));
     appendLog(`Toggled status of Housekeeping index: ${id}.`, 'key');
   };
 
   const handleToggleDining = (id: string) => {
-    setDiningOrders(prev => prev.map(d => 
+    setDiningOrders(prev => prev.map(d =>
       d.id === id ? { ...d, status: d.status === 'delivered' ? 'ordered' : 'delivered' } : d
     ));
     appendLog(`Toggled delivery state of Food order: ${id}.`, 'dining');
@@ -155,9 +150,101 @@ export default function App() {
     appendLog(`Voided booking ledger segment: ${id}.`, 'booking');
   };
 
+  const guestViewProps = {
+    language,
+    activeBooking,
+    onBookingComplete: handleBookingComplete,
+    onOpenBookingWizard: handleOpenBookingWizard,
+    selectedRoomForWizard,
+    onCloseBookingWizard: handleCloseBookingWizard,
+    isWizardOpen,
+    isNativeMobile,
+  };
+
+  const renderMobileTab = (tab: ActiveTab) => {
+    if (tab === 'home' || tab === 'rooms') {
+      return (
+        <GuestView
+          {...guestViewProps}
+          activeTab={tab}
+        />
+      );
+    }
+    if (tab === 'key') {
+      return (
+        <div className="px-4 py-4 w-full max-w-lg mx-auto">
+          <DigitalKey activeBooking={activeBooking} language={language} />
+        </div>
+      );
+    }
+    if (tab === 'concierge') {
+      return (
+        <div className="flex flex-col flex-1 min-h-0 w-full">
+          <ConciergeChat
+            language={language}
+            activeBooking={activeBooking}
+            onUpdateBookingPrefs={handleUpdateBookingPrefs}
+            onAddHousekeeping={handleAddHousekeeping}
+            onAddDining={handleAddDining}
+            fillHeight
+          />
+        </div>
+      );
+    }
+    return null;
+  };
+
+  /* ── Native mobile shell (real phones / Capacitor) ── */
+  if (isNativeMobile) {
+    return (
+      <div className="native-app-shell bg-[#F5F1EA] bg-dot-grid font-sans antialiased text-[#0B0D10]">
+        <Header
+          language={language}
+          setLanguage={setLanguage}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          isNativeMobile
+        />
+
+        <main
+          className={`native-app-content relative z-10 w-full !pb-0 ${
+            activeTab === 'concierge' ? '!overflow-hidden flex flex-col' : ''
+          }`}
+        >
+          {renderMobileTab(activeTab)}
+        </main>
+
+        <BottomNav
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          language={language}
+          nativeShell
+        />
+
+        {isWizardOpen && selectedRoomForWizard && (
+          <div className="fixed inset-0 z-[60] bg-black/60 flex items-end justify-center backdrop-blur-sm">
+            <div
+              className="w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-t-2xl"
+              style={{ paddingBottom: 'var(--safe-bottom)' }}
+            >
+              <BookingWizard
+                room={selectedRoomForWizard}
+                onBookingComplete={handleBookingComplete}
+                onClose={handleCloseBookingWizard}
+                language={language}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  /* ── Desktop / browser preview ── */
   return (
     <div className="min-h-screen bg-[#F5F1EA] bg-dot-grid font-sans antialiased text-[#0B0D10] relative">
-      {/* Editorial Luxury Header Top navbar */}
       <Header
         language={language}
         setLanguage={setLanguage}
@@ -167,122 +254,23 @@ export default function App() {
         setViewMode={setViewMode}
       />
 
-      {/* Primary Workspace Space Adjuster */}
       <main className="pt-28 pb-10 min-h-[calc(100vh-120px)] transition-all relative z-10">
         {viewMode === 'mobile' ? (
-          /* High Fidelity Mobile Simulation UI Frame */
-          <div className={isRealMobile ? "w-full max-w-md mx-auto min-h-[calc(100vh-120px)] flex flex-col relative pb-20" : "px-4"}>
-            {isRealMobile ? (
-              // Bypasses simulated device bezel frame on real physical screens/Capacitor build
-              <div className="flex-1 w-full bg-[#F5F1EA] flex flex-col relative">
-                <div className="flex-1 overflow-y-auto pb-4">
-                  {activeTab === 'home' && (
-                    <GuestView
-                      language={language}
-                      activeTab="home"
-                      activeBooking={activeBooking}
-                      onBookingComplete={handleBookingComplete}
-                      onOpenBookingWizard={handleOpenBookingWizard}
-                      selectedRoomForWizard={selectedRoomForWizard}
-                      onCloseBookingWizard={handleCloseBookingWizard}
-                      isWizardOpen={isWizardOpen}
-                    />
-                  )}
-                  {activeTab === 'rooms' && (
-                    <GuestView
-                      language={language}
-                      activeTab="rooms"
-                      activeBooking={activeBooking}
-                      onBookingComplete={handleBookingComplete}
-                      onOpenBookingWizard={handleOpenBookingWizard}
-                      selectedRoomForWizard={selectedRoomForWizard}
-                      onCloseBookingWizard={handleCloseBookingWizard}
-                      isWizardOpen={isWizardOpen}
-                    />
-                  )}
-                  {activeTab === 'key' && (
-                    <div className="pt-4 px-4">
-                      <DigitalKey activeBooking={activeBooking} language={language} />
-                    </div>
-                  )}
-                  {activeTab === 'concierge' && (
-                    <div className="min-h-[500px] flex flex-col">
-                      <ConciergeChat
-                        language={language}
-                        activeBooking={activeBooking}
-                        onUpdateBookingPrefs={handleUpdateBookingPrefs}
-                        onAddHousekeeping={handleAddHousekeeping}
-                        onAddDining={handleAddDining}
-                      />
-                    </div>
-                  )}
-                  {activeTab === 'admin' && (
-                    <div className="p-4 bg-white/95 font-mono text-center text-xs space-y-4 border border-[#0B0D10]/10">
-                      <span className="font-bold text-[#7A3A2E]">BACKSTAGE NOT SUITED FOR SMARTPHONE PORTRAIT VIEW</span>
-                      <p className="text-stone-500">Please switch view mode to [ DESKTOP ] using the switcher above.</p>
-                    </div>
-                  )}
-                </div>
+          <div className="px-4">
+            <MobileDeviceFrame
+              bottomNav={
                 <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} language={language} />
-              </div>
-            ) : (
-              // Displays detailed simulated Apple hardware notch and frame in desktop web browsers
-              <MobileDeviceFrame
-                bottomNav={
-                  <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} language={language} />
-                }
-              >
-                {activeTab === 'home' && (
-                  <GuestView
-                    language={language}
-                    activeTab="home"
-                    activeBooking={activeBooking}
-                    onBookingComplete={handleBookingComplete}
-                    onOpenBookingWizard={handleOpenBookingWizard}
-                    selectedRoomForWizard={selectedRoomForWizard}
-                    onCloseBookingWizard={handleCloseBookingWizard}
-                    isWizardOpen={isWizardOpen}
-                  />
-                )}
-                {activeTab === 'rooms' && (
-                  <GuestView
-                    language={language}
-                    activeTab="rooms"
-                    activeBooking={activeBooking}
-                    onBookingComplete={handleBookingComplete}
-                    onOpenBookingWizard={handleOpenBookingWizard}
-                    selectedRoomForWizard={selectedRoomForWizard}
-                    onCloseBookingWizard={handleCloseBookingWizard}
-                    isWizardOpen={isWizardOpen}
-                  />
-                )}
-                {activeTab === 'key' && (
-                  <div className="pt-4 px-4">
-                    <DigitalKey activeBooking={activeBooking} language={language} />
-                  </div>
-                )}
-                {activeTab === 'concierge' && (
-                  <div className="h-[730px] flex flex-col">
-                    <ConciergeChat
-                      language={language}
-                      activeBooking={activeBooking}
-                      onUpdateBookingPrefs={handleUpdateBookingPrefs}
-                      onAddHousekeeping={handleAddHousekeeping}
-                      onAddDining={handleAddDining}
-                    />
-                  </div>
-                )}
-                {activeTab === 'admin' && (
-                  <div className="p-4 bg-white/95 font-mono text-center text-xs space-y-4 border border-[#0B0D10]/10">
-                    <span className="font-bold text-[#7A3A2E]">BACKSTAGE NOT SUITED FOR SMARTPHONE PORTRAIT VIEW</span>
-                    <p className="text-stone-500">Please switch view mode to [ DESKTOP ] using the switcher above.</p>
-                  </div>
-                )}
-              </MobileDeviceFrame>
-            )}
+              }
+            >
+              {renderMobileTab(activeTab) ?? (
+                <div className="p-4 bg-white/95 font-mono text-center text-xs space-y-4 border border-[#0B0D10]/10 m-4">
+                  <span className="font-bold text-[#7A3A2E]">BACKSTAGE NOT SUITED FOR SMARTPHONE PORTRAIT VIEW</span>
+                  <p className="text-stone-500">Please switch view mode to [ DESKTOP ] using the switcher above.</p>
+                </div>
+              )}
+            </MobileDeviceFrame>
           </div>
         ) : (
-          /* Desktop Luxury Web view (fully stretched, clean, spacious columns layout) */
           <div className="max-w-7xl mx-auto px-4 sm:px-8">
             {activeTab === 'admin' ? (
               <AdminView
@@ -310,21 +298,14 @@ export default function App() {
               </div>
             ) : (
               <GuestView
-                language={language}
+                {...guestViewProps}
                 activeTab={activeTab === 'rooms' ? 'rooms' : 'home'}
-                activeBooking={activeBooking}
-                onBookingComplete={handleBookingComplete}
-                onOpenBookingWizard={handleOpenBookingWizard}
-                selectedRoomForWizard={selectedRoomForWizard}
-                onCloseBookingWizard={handleCloseBookingWizard}
-                isWizardOpen={isWizardOpen}
               />
             )}
           </div>
         )}
       </main>
 
-      {/* Flat Desktop Footer Info Panel (only displays on desktop viewMode to avoid blocking device frame layout) */}
       {viewMode === 'desktop' && (
         <footer className="border-t border-[#0B0D10]/10 px-12 py-8 flex flex-col md:flex-row justify-between items-center z-20 text-[#0B0D10]/60 font-sans text-[10px] uppercase tracking-[0.2em] gap-4 bg-[#F5F1EA]/80 backdrop-blur-sm">
           <div className="flex gap-8">
@@ -338,13 +319,12 @@ export default function App() {
             <span>Instagram</span>
             <span>Journal</span>
             <div className="flex gap-2 items-center">
-              <div className="w-2 h-2 rounded-full bg-[#7A3A2E] animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-[#7A3A2E] animate-pulse" />
               <span className="text-[#0B0D10] font-bold">Status: Open</span>
             </div>
           </div>
         </footer>
       )}
-
     </div>
   );
 }

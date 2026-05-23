@@ -37,7 +37,7 @@ export default function DigitalKey({ activeBooking, language }: DigitalKeyProps)
   };
 
   return (
-    <div className="bg-[#F5F1EA] text-[#0B0D10] p-6 max-w-sm mx-auto min-h-[500px] flex flex-col justify-between border border-[#0B0D10]/10">
+    <div className="bg-[#F5F1EA] text-[#0B0D10] p-5 sm:p-6 w-full max-w-sm mx-auto min-h-0 flex flex-col justify-between border border-[#0B0D10]/10">
       <div className="text-center space-y-2 select-none">
         <h3 className="font-headline text-2xl text-[#0B0D10] tracking-[0.1em] uppercase font-light">
           {getLabel('key_title')}
