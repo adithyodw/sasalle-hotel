@@ -82,45 +82,50 @@ export default function GuestView({
           {activeSubTab === 'intro' && (
             <div className={`space-y-8 sm:space-y-12 max-w-4xl mx-auto ${isNativeMobile ? 'px-0' : 'px-4 md:px-12'}`}>
               
-              {/* Featured Journey hero — Sasalle Hotel exterior */}
+              {/* Featured Journey hero — full-frame Sasalle Hotel exterior (3:4 portrait, HD) */}
               <figure
-                className={`relative w-full overflow-hidden select-none group ${
+                className={`relative w-full overflow-hidden select-none bg-[#1c1814] ${
                   isNativeMobile
-                    ? 'h-[58vw] min-h-[240px] max-h-[400px]'
-                    : 'h-[520px] max-w-4xl mx-auto ring-1 ring-[#B89B5E]/30'
+                    ? 'aspect-[3/4] max-h-[min(82dvh,920px)]'
+                    : 'aspect-[3/4] max-w-2xl mx-auto max-h-[min(88vh,960px)] ring-1 ring-[#B89B5E]/35 shadow-[0_24px_64px_rgba(11,13,16,0.12)]'
                 }`}
               >
                 <img
                   src={JOURNEY_HERO_IMAGE}
+                  srcSet={`${JOURNEY_HERO_IMAGE} 768w`}
+                  sizes="(max-width: 768px) 100vw, 672px"
                   alt="SASALLE Hotel — brick facade, formal gardens, Batam"
                   fetchPriority="high"
-                  decoding="async"
-                  className="absolute inset-0 w-full h-full object-cover object-center scale-100 group-active:scale-[1.02] transition-transform duration-700"
+                  decoding="sync"
+                  width={768}
+                  height={1024}
+                  className="hero-image-hd absolute inset-0 w-full h-full object-contain object-center"
                 />
-                <div className="absolute inset-0 ring-1 ring-inset ring-[#B89B5E]/25 pointer-events-none z-10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/35 to-black/5 z-[1]" />
+                <div className="absolute inset-0 ring-1 ring-inset ring-[#B89B5E]/20 pointer-events-none z-10" />
+                {/* Light top vignette; stronger only at bottom for headline legibility */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/75 z-[1] pointer-events-none" />
 
                 <div
-                  className={`absolute top-0 left-0 right-0 z-20 flex justify-between items-start ${
-                    isNativeMobile ? 'p-4' : 'p-6 md:p-8'
+                  className={`absolute top-0 left-0 right-0 z-20 flex justify-start ${
+                    isNativeMobile ? 'p-4' : 'p-6'
                   }`}
                 >
-                  <span className="font-mono text-[8px] sm:text-[9px] tracking-[0.35em] uppercase font-bold text-[#F5F1EA] bg-[#0B0D10]/55 backdrop-blur-sm border border-[#B89B5E]/40 px-3 py-1.5">
+                  <span className="font-mono text-[8px] sm:text-[9px] tracking-[0.35em] uppercase font-bold text-[#F5F1EA] bg-[#0B0D10]/50 backdrop-blur-sm border border-[#B89B5E]/45 px-3 py-1.5">
                     {getLabel('journey_featured')}
                   </span>
                 </div>
 
                 <figcaption
                   className={`absolute inset-x-0 bottom-0 z-20 flex flex-col justify-end text-white ${
-                    isNativeMobile ? 'p-5 pb-6' : 'p-8 md:p-12'
+                    isNativeMobile ? 'px-5 pb-6 pt-16' : 'px-8 pb-10 pt-20'
                   }`}
                 >
-                  <span className="text-[10px] font-mono tracking-[0.2em] mb-2 uppercase text-[#B89B5E] font-bold">
+                  <span className="text-[10px] font-mono tracking-[0.2em] mb-2 uppercase text-[#B89B5E] font-bold drop-shadow-sm">
                     {getLabel('hero_subtitle')}
                   </span>
                   <h1
-                    className={`font-headline font-light tracking-tight leading-tight text-[#F5F1EA] ${
-                      isNativeMobile ? 'text-2xl sm:text-3xl' : 'text-4xl md:text-6xl max-w-xl'
+                    className={`font-headline font-light tracking-tight leading-tight text-[#F5F1EA] drop-shadow-md ${
+                      isNativeMobile ? 'text-2xl sm:text-[1.75rem]' : 'text-4xl md:text-5xl max-w-lg'
                     }`}
                   >
                     {getLabel('hero_title')}

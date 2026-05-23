@@ -139,6 +139,14 @@
   will-change: transform;
 }
 
+/* Journey hero — crisp, full-frame hotel photography */
+.hero-image-hd {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: high-quality;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
 /* Range slider thumb for digital key */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
