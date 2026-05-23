@@ -1,5 +1,7 @@
-/** Concierge & distribution — update with live URLs when available */
-export const WHATSAPP_NUMBER = '628778456000';
+/** Concierge contact — single source of truth */
+export const WHATSAPP_NUMBER = '628127002188';
+export const PHONE_DISPLAY = '+62 812-7002-188';
+export const PHONE_TEL = `tel:+${WHATSAPP_NUMBER}`;
 
 export const SOCIAL_LINKS = {
   instagram: 'https://instagram.com/sasallehotel',

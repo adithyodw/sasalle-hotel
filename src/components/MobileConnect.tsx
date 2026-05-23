@@ -1,5 +1,5 @@
 import { Language } from '../types';
-import { SOCIAL_LINKS, OTA_PARTNERS } from '../constants/links';
+import { SOCIAL_LINKS, OTA_PARTNERS, PHONE_DISPLAY, PHONE_TEL } from '../constants/links';
 import WhatsAppConciergeButton from './WhatsAppConciergeButton';
 
 interface MobileConnectProps {
@@ -93,7 +93,13 @@ export default function MobileConnect({
         </div>
       </section>
 
-      <section className="border-t border-[#0B0D10]/10 pt-8">
+      <section className="border-t border-[#0B0D10]/10 pt-8 space-y-6 text-center">
+        <a
+          href={PHONE_TEL}
+          className="block font-mono text-[11px] tracking-[0.2em] text-[#0B0D10]/70 uppercase active:text-[#7A3A2E] transition-colors"
+        >
+          {PHONE_DISPLAY}
+        </a>
         <WhatsAppConciergeButton
           language={language}
           checkIn={checkIn}

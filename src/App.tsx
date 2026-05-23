@@ -10,6 +10,7 @@ import DigitalKey from './components/DigitalKey';
 import BookingWizard from './components/BookingWizard';
 import MobileDeviceFrame from './components/MobileDeviceFrame';
 import { useIsMobile } from './hooks/useIsMobile';
+import { PHONE_DISPLAY, PHONE_TEL } from './constants/links';
 
 export default function App() {
   const isNativeMobile = useIsMobile();
@@ -314,7 +315,9 @@ export default function App() {
         <footer className="border-t border-[#0B0D10]/10 px-12 py-8 flex flex-col md:flex-row justify-between items-center z-20 text-[#0B0D10]/60 font-sans text-[10px] uppercase tracking-[0.2em] gap-4 bg-[#F5F1EA]/80 backdrop-blur-sm">
           <div className="flex gap-8">
             <span className="font-bold text-[#0B0D10]">Batam, Indonesia</span>
-            <span>+62 778 456 000</span>
+            <a href={PHONE_TEL} className="hover:text-[#0B0D10] transition-colors">
+              {PHONE_DISPLAY}
+            </a>
           </div>
           <div className="text-center font-headline tracking-[0.1em] text-[#7A3A2E] text-xs">
             © SASALLE RESORTS • ARCHITECTURAL STILLNESS
