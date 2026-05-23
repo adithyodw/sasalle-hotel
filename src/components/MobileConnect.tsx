@@ -1,6 +1,7 @@
 import { Language } from '../types';
 import { SOCIAL_LINKS, OTA_PARTNERS, PHONE_DISPLAY, PHONE_TEL } from '../constants/links';
 import WhatsAppConciergeButton from './WhatsAppConciergeButton';
+import HotelAddress from './HotelAddress';
 
 interface MobileConnectProps {
   language: Language;
@@ -44,7 +45,9 @@ export default function MobileConnect({
 
   return (
     <div className="space-y-10 px-4 pb-6">
-      <section className="space-y-4">
+      <HotelAddress language={language} />
+
+      <section className="space-y-4 border-t border-[#0B0D10]/10 pt-8">
         <div className="text-center space-y-1">
           <span className="font-mono text-[9px] tracking-[0.35em] text-[#7A3A2E] uppercase font-bold">
             {t.social}

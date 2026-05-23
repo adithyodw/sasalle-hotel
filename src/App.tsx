@@ -10,7 +10,7 @@ import DigitalKey from './components/DigitalKey';
 import BookingWizard from './components/BookingWizard';
 import MobileDeviceFrame from './components/MobileDeviceFrame';
 import { useIsMobile } from './hooks/useIsMobile';
-import { PHONE_DISPLAY, PHONE_TEL } from './constants/links';
+import { PHONE_DISPLAY, PHONE_TEL, MAPS_URL, HOTEL_ADDRESS } from './constants/links';
 
 export default function App() {
   const isNativeMobile = useIsMobile();
@@ -311,9 +311,22 @@ export default function App() {
 
       {viewMode === 'desktop' && (
         <footer className="border-t border-[#0B0D10]/10 px-12 py-8 flex flex-col md:flex-row justify-between items-center z-20 text-[#0B0D10]/60 font-sans text-[10px] uppercase tracking-[0.2em] gap-4 bg-[#F5F1EA]/80 backdrop-blur-sm">
-          <div className="flex gap-8">
-            <span className="font-bold text-[#0B0D10]">Batam, Indonesia</span>
-            <a href={PHONE_TEL} className="hover:text-[#0B0D10] transition-colors">
+          <div className="flex flex-col gap-2 max-w-xs normal-case tracking-normal">
+            <a
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[10px] leading-relaxed text-[#0B0D10]/70 hover:text-[#7A3A2E] transition-colors not-italic"
+            >
+              {HOTEL_ADDRESS.line1}
+              <br />
+              {HOTEL_ADDRESS.line2}
+              <br />
+              {HOTEL_ADDRESS.line3}
+              <br />
+              {HOTEL_ADDRESS.region}
+            </a>
+            <a href={PHONE_TEL} className="font-bold text-[#0B0D10] hover:text-[#7A3A2E] transition-colors tracking-[0.2em]">
               {PHONE_DISPLAY}
             </a>
           </div>
