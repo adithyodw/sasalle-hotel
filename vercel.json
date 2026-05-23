@@ -1,9 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
-  "framework": "vite",
+  "installCommand": "npm ci",
+  "framework": null,
   "rewrites": [
-    { "source": "/((?!assets/|images/|favicon).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

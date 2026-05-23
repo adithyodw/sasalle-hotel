@@ -1,0 +1,7 @@
+android
+ios
+.antigravity
+node_modules
+.git
+*.md
+.env*
