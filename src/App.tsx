@@ -221,26 +221,24 @@ export default function App() {
           {renderMobileTab(activeTab)}
         </main>
 
-        <BottomNav
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          language={language}
-          fixed
-        />
+        {!isWizardOpen && (
+          <BottomNav
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            language={language}
+            fixed
+          />
+        )}
 
         {isWizardOpen && selectedRoomForWizard && (
-          <div className="fixed inset-0 z-[60] bg-black/60 flex items-end justify-center backdrop-blur-sm">
-            <div
-              className="w-full max-w-lg max-h-[92dvh] overflow-y-auto rounded-t-2xl"
-              style={{ paddingBottom: 'var(--safe-bottom)' }}
-            >
-              <BookingWizard
-                room={selectedRoomForWizard}
-                onBookingComplete={handleBookingComplete}
-                onClose={handleCloseBookingWizard}
-                language={language}
-              />
-            </div>
+          <div className="fixed inset-0 z-[200] bg-[#F5F1EA] flex flex-col">
+            <BookingWizard
+              room={selectedRoomForWizard}
+              onBookingComplete={handleBookingComplete}
+              onClose={handleCloseBookingWizard}
+              language={language}
+              presentation="sheet"
+            />
           </div>
         )}
       </div>

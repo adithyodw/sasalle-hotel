@@ -10,9 +10,18 @@ interface BookingWizardProps {
   onBookingComplete: (booking: Booking) => void;
   onClose: () => void;
   language: Language;
+  /** Full-screen sheet on mobile — sticky footer clears bottom nav */
+  presentation?: 'inline' | 'sheet';
 }
 
-export default function BookingWizard({ room, onBookingComplete, onClose, language }: BookingWizardProps) {
+export default function BookingWizard({
+  room,
+  onBookingComplete,
+  onClose,
+  language,
+  presentation = 'inline',
+}: BookingWizardProps) {
+  const isSheet = presentation === 'sheet';
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [guests, setGuests] = useState<number>(2);
   const [checkIn, setCheckIn] = useState<string>('2026-06-15');
@@ -91,18 +100,65 @@ export default function BookingWizard({ room, onBookingComplete, onClose, langua
     setStep(3);
   };
 
+  const stepActions =
+    step === 1 ? (
+      <button
+        type="button"
+        id="btn-next-step"
+        onClick={() => setStep(2)}
+        className="w-full bg-[#0B0D10] text-[#F5F1EA] py-4 font-sans text-xs font-black tracking-widest uppercase active:bg-[#7A3A2E] flex items-center justify-center gap-2 transition-colors"
+      >
+        FORWARD TO DESIGN PREFERENCES
+        <ChevronRight size={14} />
+      </button>
+    ) : step === 2 ? (
+      <div className="flex gap-2">
+        <button
+          type="button"
+          id="btn-back-step"
+          onClick={() => setStep(1)}
+          className="w-1/3 border border-[#0B0D10]/20 text-[#0B0D10] py-4 text-xs font-mono uppercase font-bold active:bg-[#0B0D10]/5"
+        >
+          BACK
+        </button>
+        <button
+          type="button"
+          id="btn-complete-booking"
+          onClick={executeReservationComplete}
+          className="flex-1 bg-[#0B0D10] text-[#F5F1EA] py-4 text-xs font-sans font-black tracking-widest uppercase active:bg-[#7A3A2E] transition-colors"
+        >
+          COMPLETE BOOKING
+        </button>
+      </div>
+    ) : null;
+
   return (
-    <div className="bg-[#F5F1EA] text-[#0B0D10] p-6 md:p-8 border border-[#0B0D10]/15 max-w-xl mx-auto rounded-none relative shadow-xl">
-      <button 
+    <div
+      className={`bg-[#F5F1EA] text-[#0B0D10] relative shadow-xl flex flex-col ${
+        isSheet
+          ? 'min-h-0 h-full max-h-[100dvh] border-0 rounded-none'
+          : 'p-6 md:p-8 border border-[#0B0D10]/15 max-w-xl mx-auto rounded-none'
+      }`}
+    >
+      <button
+        type="button"
         id="btn-close-wizard"
-        onClick={onClose} 
-        className="absolute top-4 right-4 font-sans text-[10px] tracking-widest hover:text-[#7A3A2E] border border-[#0B0D10]/10 px-3 py-1 bg-white/50"
+        onClick={onClose}
+        className={`absolute top-4 right-4 z-30 font-sans text-[10px] tracking-widest active:text-[#7A3A2E] border border-[#0B0D10]/10 px-3 py-1.5 bg-white/80 backdrop-blur-sm ${
+          isSheet ? 'top-[max(1rem,var(--safe-top))]' : ''
+        }`}
       >
         CLOSE
       </button>
 
-      {/* Progress Line */}
-      <div className="flex justify-between items-center mb-10 border-b border-[#0B0D10]/10 pb-4 select-none">
+      <div
+        className={`flex-1 min-h-0 overflow-y-auto overscroll-contain ${
+          isSheet ? 'px-5 pt-5 pb-4' : ''
+        }`}
+        style={isSheet ? { paddingTop: 'calc(1.25rem + var(--safe-top))' } : undefined}
+      >
+        {/* Progress Line */}
+        <div className={`flex justify-between items-center border-b border-[#0B0D10]/10 pb-4 select-none ${isSheet ? 'mb-6 pr-16' : 'mb-10'}`}>
         <h3 className="font-headline text-xl text-[#0B0D10] font-light tracking-wide">
           {step === 1 ? 'Step I: Sanctuary Setup' : step === 2 ? 'Step II: Personalize Presence' : 'Step III: Complete Sanction'}
         </h3>
@@ -249,14 +305,7 @@ export default function BookingWizard({ room, onBookingComplete, onClose, langua
             </p>
           </div>
 
-          <button 
-            id="btn-next-step"
-            onClick={() => setStep(2)}
-            className="w-full bg-[#0B0D10] text-[#F5F1EA] py-4 font-sans text-xs font-black tracking-widest uppercase hover:bg-[#7A3A2E] flex items-center justify-center gap-2 mt-4 transition-colors"
-          >
-            FORWARD TO DESIGN PREFERENCES
-            <ChevronRight size={14} />
-          </button>
+          {!isSheet && stepActions}
         </div>
       )}
 
@@ -400,22 +449,7 @@ export default function BookingWizard({ room, onBookingComplete, onClose, langua
             />
           </div>
 
-          <div className="flex gap-2">
-            <button 
-              id="btn-back-step"
-              onClick={() => setStep(1)}
-              className="w-1/3 border border-[#0B0D10]/20 text-[#0B0D10] py-4 text-xs font-mono uppercase font-bold"
-            >
-              BACK
-            </button>
-            <button 
-              id="btn-complete-booking"
-              onClick={executeReservationComplete}
-              className="flex-1 bg-[#0B0D10] text-[#F5F1EA] py-4 text-xs font-sans font-black tracking-widest uppercase hover:bg-[#7A3A2E] transition-colors"
-            >
-              COMPLETE BOOKING
-            </button>
-          </div>
+          {!isSheet && stepActions}
         </div>
       )}
 
@@ -487,6 +521,16 @@ export default function BookingWizard({ room, onBookingComplete, onClose, langua
               DISMISS AND RETURN
             </button>
           </div>
+        </div>
+      )}
+      </div>
+
+      {isSheet && stepActions && (
+        <div
+          className="shrink-0 border-t border-[#0B0D10]/10 bg-[#F5F1EA]/98 backdrop-blur-md px-5 pt-3 shadow-[0_-8px_32px_rgba(11,13,16,0.08)] z-20"
+          style={{ paddingBottom: 'max(1rem, var(--safe-bottom))' }}
+        >
+          {stepActions}
         </div>
       )}
     </div>

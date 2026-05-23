@@ -541,13 +541,16 @@ export default function GuestView({
 
       {/* POPUP OVERLAY WIZARD */}
       {isWizardOpen && selectedRoomForWizard && !isNativeMobile && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
-          <BookingWizard
-            room={selectedRoomForWizard}
-            onBookingComplete={onBookingComplete}
-            onClose={onCloseBookingWizard}
-            language={language}
-          />
+        <div className="fixed inset-0 z-[200] bg-black/60 flex items-end sm:items-center justify-center backdrop-blur-sm">
+          <div className="w-full sm:max-w-lg max-h-[92dvh] sm:max-h-[90vh] flex flex-col">
+            <BookingWizard
+              room={selectedRoomForWizard}
+              onBookingComplete={onBookingComplete}
+              onClose={onCloseBookingWizard}
+              language={language}
+              presentation="sheet"
+            />
+          </div>
         </div>
       )}
 
