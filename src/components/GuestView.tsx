@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Room, Booking, Language } from '../types';
-import { ROOMS, DICTIONARY, SPA_TREATMENTS, priceTable } from '../data';
+import { ROOMS, DICTIONARY, SPA_TREATMENTS, priceTable, JOURNEY_HERO_IMAGE } from '../data';
 import CurrencyPricing from './CurrencyPricing';
 import MobileConnect from './MobileConnect';
 import WhatsAppConciergeButton from './WhatsAppConciergeButton';
@@ -82,20 +82,51 @@ export default function GuestView({
           {activeSubTab === 'intro' && (
             <div className={`space-y-8 sm:space-y-12 max-w-4xl mx-auto ${isNativeMobile ? 'px-0' : 'px-4 md:px-12'}`}>
               
-              {/* Massive Cinematic Hero Banner with Text Overlay */}
-              <div
-                className={`relative w-full bg-cover bg-center select-none ${isNativeMobile ? 'h-[52vw] min-h-[220px] max-h-[360px]' : 'h-[480px]'}`}
-                style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuACA1bW6pzkHrNaWU7651J1uvHwuF48gcD38-P49yYDemIgPKkZ_boZLkpEwZgqtVyiyDGTR3xcwEXuqt73xpKIKz0TgpQmrj1rQkJq0rjnLnhMPx0RjcTTyyoS1JUA3y7D5cnzOaCpQzhGLNEo0SjqZ4YU4I6jlBblW72d7VkAcs1O8_sPTr4EZ3CeDpIkVSgvtG5-lu29R4EJU6evVVR7jwJxvuoeGxJsUPg2MjDFnJ2Naprb-VmC73Lw3laRIQzq7UbohZ8TdS_R')` }}
+              {/* Featured Journey hero — Sasalle Hotel exterior */}
+              <figure
+                className={`relative w-full overflow-hidden select-none group ${
+                  isNativeMobile
+                    ? 'h-[58vw] min-h-[240px] max-h-[400px]'
+                    : 'h-[520px] max-w-4xl mx-auto ring-1 ring-[#B89B5E]/30'
+                }`}
               >
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 flex flex-col justify-end text-white ${isNativeMobile ? 'p-5' : 'p-8 md:p-12'}`}>
-                  <span className="text-[10px] font-mono tracking-[0.2em] opacity-80 mb-2 uppercase text-[#B89B5E] font-bold">
+                <img
+                  src={JOURNEY_HERO_IMAGE}
+                  alt="SASALLE Hotel — brick facade, formal gardens, Batam"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover object-center scale-100 group-active:scale-[1.02] transition-transform duration-700"
+                />
+                <div className="absolute inset-0 ring-1 ring-inset ring-[#B89B5E]/25 pointer-events-none z-10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/35 to-black/5 z-[1]" />
+
+                <div
+                  className={`absolute top-0 left-0 right-0 z-20 flex justify-between items-start ${
+                    isNativeMobile ? 'p-4' : 'p-6 md:p-8'
+                  }`}
+                >
+                  <span className="font-mono text-[8px] sm:text-[9px] tracking-[0.35em] uppercase font-bold text-[#F5F1EA] bg-[#0B0D10]/55 backdrop-blur-sm border border-[#B89B5E]/40 px-3 py-1.5">
+                    {getLabel('journey_featured')}
+                  </span>
+                </div>
+
+                <figcaption
+                  className={`absolute inset-x-0 bottom-0 z-20 flex flex-col justify-end text-white ${
+                    isNativeMobile ? 'p-5 pb-6' : 'p-8 md:p-12'
+                  }`}
+                >
+                  <span className="text-[10px] font-mono tracking-[0.2em] mb-2 uppercase text-[#B89B5E] font-bold">
                     {getLabel('hero_subtitle')}
                   </span>
-                  <h1 className={`font-headline font-light tracking-tight leading-tight text-[#F5F1EA] ${isNativeMobile ? 'text-2xl sm:text-3xl' : 'text-4xl md:text-6xl max-w-xl'}`}>
+                  <h1
+                    className={`font-headline font-light tracking-tight leading-tight text-[#F5F1EA] ${
+                      isNativeMobile ? 'text-2xl sm:text-3xl' : 'text-4xl md:text-6xl max-w-xl'
+                    }`}
+                  >
                     {getLabel('hero_title')}
                   </h1>
-                </div>
-              </div>
+                </figcaption>
+              </figure>
 
               {/* Editorial Intro Narrative */}
               <div className={`text-center max-w-2xl mx-auto space-y-4 py-6 ${isNativeMobile ? 'px-4' : ''}`}>

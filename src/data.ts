@@ -68,6 +68,9 @@ export const SPA_TREATMENTS: SpaTreatment[] = [
   },
 ];
 
+/** Primary Journey tab hero — Sasalle Hotel exterior, Batam */
+export const JOURNEY_HERO_IMAGE = '/images/sasalle-hotel-exterior.png';
+
 export const ROOMS: Room[] = [
   {
     id: 'heritage-suite',
@@ -161,6 +164,11 @@ export const DICTIONARY: Record<string, Record<Language, string>> = {
     "zh": "后台管理"
   },
   // Home Text
+  "journey_featured": {
+    "en": "THE RESIDENCE · BATAM",
+    "id": "KEDIAMAN · BATAM",
+    "zh": "庄园 · 巴淡岛"
+  },
   "hero_subtitle": {
     "en": "ESTABLISHED MCMXXIV",
     "id": "TERTATA SEJAK MCMXXIV",
