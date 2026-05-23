@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-headline: "Playfair Display", serif;
+}
+
+@layer base {
+  body {
+    background-color: #F5F1EA;
+    color: #0B0D10;
+  }
+}
+
+/* Custom dot-grid pattern inspired by the Clean Minimalism template design */
+.bg-dot-grid {
+  position: relative;
+}
+.bg-dot-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(#7A3A2E 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.08;
+}
+
+/* Custom utilitarian scrollbar suppression for smooth layout simulation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
