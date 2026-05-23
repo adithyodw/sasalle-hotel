@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Room, Booking, Language } from '../types';
-import { ROOMS, DICTIONARY, INDONESIA_BOTANICALS } from '../data';
+import { ROOMS, DICTIONARY, SPA_TREATMENTS, priceTable } from '../data';
+import CurrencyPricing from './CurrencyPricing';
+import MobileConnect from './MobileConnect';
+import WhatsAppConciergeButton from './WhatsAppConciergeButton';
+import { buildWhatsAppBookingUrl } from '../constants/links';
 import { Calendar, Users, Clock, ArrowRight, ShieldCheck, Heart, Award, Sparkles } from 'lucide-react';
 import BookingWizard from './BookingWizard';
 
@@ -53,8 +57,8 @@ export default function GuestView({
             <div className="flex gap-1 sm:gap-2 bg-[#0B0D10]/5 p-1 text-[9px] sm:text-[10px] font-mono font-bold w-full max-w-md">
               {(['intro', 'dining', 'spa'] as const).map((sub) => {
                 const subLabels = isNativeMobile
-                  ? { intro: 'JOURNEY', dining: 'DINING', spa: 'SPA' }
-                  : { intro: 'JOURNEY', dining: 'THE BRICK & IRON', spa: 'THE SANCTUARY SPA' };
+                  ? { intro: 'JOURNEY', dining: 'DINING', spa: 'SANCTUARY' }
+                  : { intro: 'JOURNEY', dining: 'THE BRICK & IRON', spa: 'SANCTUARY SPA' };
                 return (
                   <button
                     key={sub}
@@ -175,6 +179,8 @@ export default function GuestView({
                   </div>
                 </div>
               </div>
+
+              <MobileConnect language={language} />
             </div>
           )}
 
@@ -329,66 +335,64 @@ export default function GuestView({
                 </p>
               </div>
 
-              {/* Rituals list in design layout with image nodes */}
-              <div className="space-y-6 pt-3 select-none">
-                <span className="block font-mono text-[10px] tracking-widest font-bold text-[#7A3A2E] text-center uppercase">
-                  {getLabel('curated_experiences')}
-                </span>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Ritual 1 */}
-                  <div className="bg-white/90 border border-[#0B0D10]/10 p-6 space-y-4 shadow-sm hover:border-[#7A3A2E]/20 transition-all">
-                    <div className="h-56 overflow-hidden">
-                      <img 
-                        className="w-full h-full object-cover"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT20K8chCKOyb-8ar2fQATc3-m1bXhPfwr5YMRoVy7rXgIABhQQAMi8hmiSDtUldwYsYTJz87R_O5CrQoMzIXyHkr5HqD9nSaGAfyKpVcXOaF8VpDxDzQp2P0i-Ln6opevOyrsmQ7fS9csDmGqClX426qDCL-Yo_Wa_a4pR_4vcCGKsFKPEjSKBJy1SZht1i1Yx5wba2EPkRQTL9Xoy5x5IdYI7iw6J-kgAeRT5_XZs6uFpSogKttBikYPTlaEr26WxkJv8Wko_RCq" 
-                        alt="Stone Bathing Ritual"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <h4 className="font-headline text-xl text-[#0B0D10] font-light leading-snug">{getLabel('stone_ritual')}</h4>
-                      <p className="text-xs text-[#0B0D10]/70">
-                        Volcanic basalt riverbeds are heated under kiln embers and immersed in mineral baths to draw micro-fatigue dynamically from bone connective linings.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Ritual 2 */}
-                  <div className="bg-white/90 border border-[#0B0D10]/10 p-6 space-y-4 shadow-sm hover:border-[#7A3A2E]/20 transition-all">
-                    <div className="h-56 overflow-hidden">
-                      <img 
-                        className="w-full h-full object-cover"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlLpdci3Ce3hQJi8TNFAY9wZx77ByALYprhuCP4iRLUXc4iAcUI0_UY6MoBBRi0-2EU7g5ivK_PbmM0w8_nqM7G31BlOJkYYp7wPOmSAfl12INUhaXoyGLYURafxMwqxiED9q79DhYDfswhCvPvZq7eeYyum5_VeEQxHNTIFoRn_-6pzS7np1kZIJmaY82VrdEEcALMZT7RKZrhDVflGTlwdzQn-dJra86sPEgX1b7hJih8FU2cFjX8vyZ0VuNmI4mopaz3ShvZEnS" 
-                        alt="Clay Wrap"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                       <h4 className="font-headline text-xl text-[#0B0D10] font-light leading-snug">{getLabel('clay_wrap')}</h4>
-                       <p className="text-xs text-[#0B0D10]/70">
-                         Utilizes our iconic glazed heritage tiles' minerals and organic sediment, generating a skin-pore cell detoxifying mask from head to chest.
-                       </p>
-                    </div>
-                  </div>
+              {/* Signature spa & massage services */}
+              <div className={`space-y-8 pt-2 select-none ${isNativeMobile ? 'px-4' : ''}`}>
+                <div className="text-center space-y-1">
+                  <span className="block font-mono text-[10px] tracking-[0.35em] font-bold text-[#7A3A2E] uppercase">
+                    {getLabel('sanctuary_spa_services')}
+                  </span>
+                  <p className="text-[11px] text-[#0B0D10]/55 font-mono tracking-wider uppercase">
+                    {getLabel('pricing_all_currencies')}
+                  </p>
                 </div>
+
+                {SPA_TREATMENTS.map((treatment) => (
+                  <article
+                    key={treatment.id}
+                    className="bg-white/90 border border-[#0B0D10]/10 overflow-hidden shadow-sm"
+                  >
+                    <div className={`overflow-hidden ${isNativeMobile ? 'h-44' : 'h-56'}`}>
+                      <img
+                        loading="lazy"
+                        className="w-full h-full object-cover"
+                        src={treatment.image}
+                        alt={treatment.name}
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                    <div className="p-5 sm:p-6 space-y-4">
+                      <div className="space-y-1">
+                        <span className="font-mono text-[9px] tracking-[0.25em] text-[#B89B5E] uppercase font-bold">
+                          {treatment.subtitle[language]}
+                        </span>
+                        <h4 className="font-headline text-xl sm:text-2xl text-[#0B0D10] font-light tracking-wide">
+                          {treatment.name}
+                        </h4>
+                        <p className="font-mono text-[10px] text-[#0B0D10]/50 tracking-widest uppercase">
+                          {treatment.duration[language]}
+                        </p>
+                      </div>
+                      <p className="text-xs text-[#0B0D10]/75 leading-relaxed">
+                        {treatment.description[language]}
+                      </p>
+                      <CurrencyPricing pricing={treatment.pricing} compact />
+                      <a
+                        href={buildWhatsAppBookingUrl({
+                          roomName: `${treatment.name} — Sanctuary Spa`,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full text-center border border-[#0B0D10]/15 py-3 text-[10px] font-mono tracking-[0.2em] uppercase text-[#0B0D10]/80 active:bg-[#0B0D10]/5 transition-colors"
+                      >
+                        {getLabel('inquire_ritual')}
+                      </a>
+                    </div>
+                  </article>
+                ))}
               </div>
 
-              {/* Wellness call-down CTA section with pattern background */}
-              <div className={`bg-[#7A3A2E] text-white text-center space-y-5 relative border border-[#0B0D10]/10 shadow-lg select-none ${isNativeMobile ? 'mx-4 p-6' : 'p-10'}`}>
-                <h3 className="font-headline text-3xl text-[#F5F1EA] font-light tracking-wide">
-                  {getLabel('reserve_moment')}
-                </h3>
-                <p className="text-sm text-[#F5F1EA]/80 max-w-md mx-auto leading-relaxed font-sans">
-                  {getLabel('reserve_moment_desc')}
-                </p>
-                <button
-                  id="btn-spa-inquiry"
-                  onClick={() => alert('Bespoke wellness inquiry routed. Sasalle Sanctuary concierge will engage shortly.')}
-                  className="bg-white text-[#7A3A2E] px-8 py-3 text-[11px] uppercase tracking-[0.2em] font-sans font-bold hover:bg-[#F5F1EA] hover:text-[#0B0D10] transition-colors duration-300"
-                >
-                  {getLabel('inquire_ritual')}
-                </button>
+              <div className={isNativeMobile ? 'mx-4' : ''}>
+                <WhatsAppConciergeButton language={language} variant="primary" />
               </div>
             </div>
           )}
@@ -463,6 +467,14 @@ export default function GuestView({
                       <span className="text-lg font-bold text-[#7A3A2E]">
                         ${room.price} USD <span className="text-xs font-normal text-stone-500">/ night</span>
                       </span>
+                      <details className="mt-2 group">
+                        <summary className="text-[9px] font-mono tracking-widest text-[#0B0D10]/45 uppercase cursor-pointer list-none">
+                          {getLabel('pricing_all_currencies')}
+                        </summary>
+                        <div className="mt-2">
+                          <CurrencyPricing pricing={priceTable(room.price)} compact />
+                        </div>
+                      </details>
                     </div>
 
                     <button
@@ -486,6 +498,8 @@ export default function GuestView({
             <span className="w-1.5 h-1.5 rounded-full bg-[#7A3A2E]/20" />
             <span className="w-1.5 h-1.5 rounded-full bg-[#7A3A2E]/20" />
           </div>
+
+          <MobileConnect language={language} />
         </div>
       )}
 

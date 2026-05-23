@@ -209,9 +209,13 @@ export default function App() {
         />
 
         <main
-          className={`native-app-content relative z-10 w-full !pb-0 ${
+          className={`native-app-content relative z-10 w-full ${
             activeTab === 'concierge' ? '!overflow-hidden flex flex-col' : ''
           }`}
+          style={{
+            paddingTop: 'var(--mobile-header-h)',
+            paddingBottom: 'var(--mobile-nav-h)',
+          }}
         >
           {renderMobileTab(activeTab)}
         </main>
@@ -220,7 +224,7 @@ export default function App() {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           language={language}
-          nativeShell
+          fixed
         />
 
         {isWizardOpen && selectedRoomForWizard && (

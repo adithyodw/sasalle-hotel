@@ -1,4 +1,72 @@
-import { Room, Language } from './types';
+import { Room, Language, SpaTreatment, CurrencyCode } from './types';
+
+/** Base USD — converted at fixed luxury retail rates for consistent display */
+const FX: Record<CurrencyCode, number> = {
+  USD: 1,
+  IDR: 15_800,
+  SGD: 1.34,
+  MYR: 4.48,
+  CNY: 7.24,
+  KRW: 1_340,
+};
+
+export function priceTable(usd: number): Record<CurrencyCode, number> {
+  return {
+    USD: usd,
+    IDR: Math.round(usd * FX.IDR),
+    SGD: Math.round(usd * FX.SGD),
+    MYR: Math.round(usd * FX.MYR),
+    CNY: Math.round(usd * FX.CNY),
+    KRW: Math.round(usd * FX.KRW),
+  };
+}
+
+export const SPA_TREATMENTS: SpaTreatment[] = [
+  {
+    id: 'spa-secret',
+    name: 'THE SPA SECRET',
+    subtitle: {
+      en: 'Signature Sanctuary Ritual',
+      id: 'Ritual Suaka Signature',
+      zh: '殿堂秘仪',
+    },
+    description: {
+      en: 'An enveloping sequence of warm stone, botanical oils, and silent touch—curated exclusively for Sasalle. A journey of deep restoration through Indonesian heritage and European precision.',
+      id: 'Rangkaian batu hangat, minyak botani, dan sentuhan sunyi—dikurasi eksklusif untuk Sasalle. Perjalanan pemulihan mendalam melalui warisan Indonesia dan presisi Eropa.',
+      zh: '暖石、植萃精油与静默触感的层层包裹——沙萨勒专属编排。印尼传承与欧洲精度交融的深层焕活之旅。',
+    },
+    duration: {
+      en: '120 minutes',
+      id: '120 menit',
+      zh: '120 分钟',
+    },
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCT20K8chCKOyb-8ar2fQATc3-m1bXhPfwr5YMRoVy7rXgIABhQQAMi8hmiSDtUldwYsYTJz87R_O5CrQoMzIXyHkr5HqD9nSaGAfyKpVcXOaF8VpDxDzQp2P0i-Ln6opevOyrsmQ7fS9csDmGqClX426qDCL-Yo_Wa_a4pR_4vcCGKsFKPEjSKBJy1SZht1i1Yx5wba2EPkRQTL9Xoy5x5IdYI7iw6J-kgAeRT5_XZs6uFpSogKttBikYPTlaEr26WxkJv8Wko_RCq',
+    pricing: priceTable(195),
+  },
+  {
+    id: 'indothai-massage',
+    name: 'INDOTHAI Massage',
+    subtitle: {
+      en: 'Authentic Indo-Thai Heritage',
+      id: 'Warisan Indo-Thai Autentik',
+      zh: '印泰正宗理疗',
+    },
+    description: {
+      en: 'A refined fusion of Indonesian jamu wisdom and classical Thai sen lines—performed with unhurried grace. Restores circulation, releases held tension, and returns the body to quiet equilibrium.',
+      id: 'Perpaduan halus kearifan jamu Indonesia dan garis sen Thai klasik—dilakukan dengan anggun tanpa tergesa. Mengembalikan sirkulasi, melepaskan ketegangan, dan menyeimbangkan raga.',
+      zh: '印尼 jamu 智慧与泰式经络的精致融合——从容而优雅。疏通循环，释放深层紧绷，归于静谧平衡。',
+    },
+    duration: {
+      en: '90 minutes',
+      id: '90 menit',
+      zh: '90 分钟',
+    },
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuAlLpdci3Ce3hQJi8TNFAY9wZx77ByALYprhuCP4iRLUXc4iAcUI0_UY6MoBBRi0-2EU7g5ivK_PbmM0w8_nqM7G31BlOJkYYp7wPOmSAfl12INUhaXoyGLYURafxMwqxiED9q79DhYDfswhCvPvZq7eeYyum5_VeEQxHNTIFoRn_-6pzS7np1kZIJmaY82VrdEEcALMZT7RKZrhDVflGTlwdzQn-dJra86sPEgX1b7hJih8FU2cFjX8vyZ0VuNmI4mopaz3ShvZEnS',
+    pricing: priceTable(108),
+  },
+];
 
 export const ROOMS: Room[] = [
   {
@@ -239,6 +307,16 @@ export const DICTIONARY: Record<string, Record<Language, string>> = {
     "en": "INQUIRE FOR A RITUAL",
     "id": "HUBUNGI CONCIERGE SPA",
     "zh": "奢华邀约尊享"
+  },
+  "sanctuary_spa_services": {
+    "en": "Sanctuary Spa & Massage",
+    "id": "Sanctuary Spa & Pijat",
+    "zh": "圣殿水疗与理疗"
+  },
+  "pricing_all_currencies": {
+    "en": "Rates in all currencies",
+    "id": "Tarif semua mata uang",
+    "zh": "多币种价格"
   },
   // Dining Page
   "dining_subtitle": {

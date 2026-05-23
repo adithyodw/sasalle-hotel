@@ -9,7 +9,7 @@ function detectMobile(): boolean {
   const isNarrowViewport = window.innerWidth < 768;
   const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
-  return isCapacitor || (isNarrowViewport && (isCoarsePointer || isMobileUA));
+  return isCapacitor || isMobileUA || (isNarrowViewport && isCoarsePointer);
 }
 
 export function useIsMobile() {

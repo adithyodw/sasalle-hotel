@@ -5,6 +5,18 @@
 
 export type Language = 'en' | 'id' | 'zh';
 
+export type CurrencyCode = 'IDR' | 'SGD' | 'MYR' | 'CNY' | 'KRW' | 'USD';
+
+export interface SpaTreatment {
+  id: string;
+  name: string;
+  subtitle: Record<Language, string>;
+  description: Record<Language, string>;
+  duration: Record<Language, string>;
+  image: string;
+  pricing: Record<CurrencyCode, number>;
+}
+
 export type ActiveTab = 'home' | 'rooms' | 'key' | 'concierge' | 'admin';
 
 export type ViewMode = 'desktop' | 'mobile';

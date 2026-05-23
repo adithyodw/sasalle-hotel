@@ -10,7 +10,7 @@ function initNativeMobileClass() {
   const isNarrow = window.innerWidth < 768;
   const isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 
-  if (isCapacitor || (isNarrow && (isCoarse || isMobileUA))) {
+  if (isCapacitor || isMobileUA || (isNarrow && isCoarse)) {
     document.body.classList.add('native-mobile');
   }
 }

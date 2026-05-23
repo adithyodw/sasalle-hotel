@@ -23,7 +23,7 @@ export default function Header({
   if (isNativeMobile) {
     return (
       <header
-        className="shrink-0 z-50 bg-[#F5F1EA]/98 backdrop-blur-md border-b border-[#0B0D10]/10 flex items-center justify-between gap-3 px-4"
+        className="fixed top-0 left-0 right-0 z-[100] bg-[#F5F1EA]/98 backdrop-blur-md border-b border-[#0B0D10]/10 flex items-center justify-between gap-3 px-4"
         style={{
           paddingTop: 'var(--safe-top)',
           minHeight: 'var(--mobile-header-h)',

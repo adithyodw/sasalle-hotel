@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Room, Booking, BookingPreference } from '../types';
 import { Calendar, Users, Award, Car, Check, ChevronRight, Sparkles, Sliders } from 'lucide-react';
 import { ROOMS } from '../data';
+import WhatsAppConciergeButton from './WhatsAppConciergeButton';
+import { Language } from '../types';
 
 interface BookingWizardProps {
   room: Room;
   onBookingComplete: (booking: Booking) => void;
   onClose: () => void;
-  language: string;
+  language: Language;
 }
 
 export default function BookingWizard({ room, onBookingComplete, onClose, language }: BookingWizardProps) {
@@ -467,13 +469,24 @@ export default function BookingWizard({ room, onBookingComplete, onClose, langua
             "Your digital entry code has been provisioned. Please head over to the Digital Key section to pre-authorize your physical unlocking sequence."
           </p>
 
-          <button 
-            id="btn-close-and-view"
-            onClick={onClose}
-            className="w-full bg-[#0B0D10] text-white py-4 font-sans text-xs font-black tracking-widest uppercase hover:bg-[#7A3A2E] transition-colors"
-          >
-            DISMISS AND RETURN
-          </button>
+          <div className="space-y-3">
+            <WhatsAppConciergeButton
+              language={language}
+              checkIn={checkIn}
+              checkOut={checkOut}
+              roomName={room.name}
+              guests={guests}
+              variant="primary"
+            />
+            <button
+              type="button"
+              id="btn-close-and-view"
+              onClick={onClose}
+              className="w-full border border-[#0B0D10]/15 text-[#0B0D10]/70 py-3 font-mono text-[10px] tracking-widest uppercase active:bg-[#0B0D10]/5 transition-colors"
+            >
+              DISMISS AND RETURN
+            </button>
+          </div>
         </div>
       )}
     </div>

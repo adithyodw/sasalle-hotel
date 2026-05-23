@@ -22,17 +22,16 @@ export default function BottomNav({ activeTab, setActiveTab, language, fixed = f
     { id: 'concierge' as ActiveTab, icon: HelpCircle, labelKey: 'concierge' },
   ];
 
-  const navClass = nativeShell
-    ? 'shrink-0 z-50 bg-[#F5F1EA]/98 backdrop-blur-md border-t border-[#0B0D10]/10 shadow-[0_-4px_24px_rgba(11,13,16,0.06)] flex justify-around items-stretch w-full'
-    : fixed
-    ? 'fixed bottom-0 left-0 right-0 z-50 bg-[#F5F1EA]/98 backdrop-blur-md border-t border-[#0B0D10]/10 shadow-[0_-4px_24px_rgba(11,13,16,0.06)] flex justify-around items-stretch'
+  const isPinned = nativeShell || fixed;
+  const navClass = isPinned
+    ? 'fixed bottom-0 left-0 right-0 z-[100] bg-[#F5F1EA]/98 backdrop-blur-md border-t border-[#0B0D10]/10 shadow-[0_-4px_24px_rgba(11,13,16,0.06)] flex justify-around items-stretch w-full'
     : 'absolute bottom-0 left-0 right-0 z-40 bg-[#F5F1EA] border-t border-[#0B0D10]/10 shadow-sm flex justify-around items-center h-20 pb-3';
 
   return (
     <nav
       className={navClass}
       style={
-        fixed || nativeShell
+        isPinned
           ? {
               paddingBottom: 'var(--safe-bottom)',
               minHeight: 'var(--mobile-nav-h)',
